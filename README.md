@@ -69,3 +69,50 @@ Please provide:
 ## What We’ll Look For
 
 We’ll discuss your work with you. We’re interested in the quality of the learning experience and interaction, thoughtful frontend implementation, usability and accessibility, and how you prioritize and explain tradeoffs within a limited time. We’re not judging the topic you choose or expecting a production-ready application.
+
+---
+
+# The tutorial: How to analyze a song's chord progression
+
+A five-page interactive lesson (a home page plus four steps) that walks a learner through working out a song's chords by ear: find the tonal center, pick the scale, find the chords that fit the scale, then place them on the song's timeline. The spec it was built from is in [`specs/initial-push/spec.md`](specs/initial-push/spec.md).
+
+## Run it
+
+```bash
+npm ci
+npm run dev        # http://localhost:3000
+```
+
+```bash
+npm run lint
+npm run build      # writes a fully static site to out/
+npx serve out      # preview the static build
+```
+
+The app is a static export (`output: "export"` in `next.config.ts`): one HTML file per route, client-side navigation between them, no server.
+
+## Deploy to Vercel
+
+Import the repository at [vercel.com/new](https://vercel.com/new) (or run `npx vercel`) and accept the detected **Next.js** preset. Vercel recognises the static export and serves `out/`; no extra configuration is needed.
+
+## Where things are
+
+| Path | What it is |
+| --- | --- |
+| `src/app/` | One route per page: `/`, `/tonal-center`, `/scale`, `/available-chords`, `/chord-progression` |
+| `src/components/` | The timeline, piano, circular keyboard, step frame, and the audio preloader |
+| `src/lib/audio.ts` | The Web Audio engine: preloading, gapless song loop, piano voices, feedback sounds |
+| `src/lib/music.ts` | Notes, scales, chords, the answer key, and the chord-region timings |
+| `public/audio/` | The song excerpt, piano samples, and feedback sounds |
+| `scripts/` | How the piano samples and chord-region timings were produced |
+
+## Audio credits
+
+- **Song excerpt** — "Count on Me" by Bruno Mars (`public/audio/count-on-me.wav`), edited to loop.
+- **Piano** — [Salamander Grand Piano V3](https://github.com/sfzinstruments/SalamanderGrandPiano) by Alexander Holm, [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), from the copies hosted by [Tone.js](https://github.com/Tonejs/audio). Salamander records every third semitone; `scripts/make-piano-samples.sh` resamples the notes in between, trims each to five seconds, and normalises them.
+- **Correct / incorrect sounds** — `confirmation_001` and `question_004` from [Kenney's Interface Sounds](https://kenney.nl/assets/interface-sounds), CC0.
+- **Celebration jingle** — the vibraphone version of [Win Jingle](https://opengameart.org/content/win-jingle) by Fupi, CC0, transposed up a whole tone so that it ends on C.
+
+## How the chord regions were found
+
+`python3 scripts/analyze-chords.py` (numpy only) prints the timings used in `src/lib/music.ts`. It estimates the tempo from the onset envelope (89 BPM; the loop is exactly eight bars), tracks the strongest bass note on each beat, and reports the beats where that note changes.
