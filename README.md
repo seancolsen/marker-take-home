@@ -1,103 +1,76 @@
-# Frontend Take-Home: Teach Me
 
-Build a small interactive tutorial that teaches us something you know well. Choose a topic you have unique or extensive knowledge of. It can be professional, personal, serious, or fun.
+# Song analyzer
 
-For example, if you’re an experienced horseback rider, you might teach the steps involved in approaching a jump. If you’re a chef, you might teach someone how to chop an onion. Choose something that lets you demonstrate how you think about teaching and interaction, rather than simply displaying an article.
+A five-page interactive lesson (a home page plus four steps) that walks a learner through working out a song's chords by ear: find the tonal center, pick the scale, find the chords that fit the scale, then place them on the song's timeline.
 
-## Time Limit
+## Live deployment
 
-Spend **no more than 4 hours total**, including planning, building, and documenting your work. You don’t need to use all four hours. We’d rather see a focused, polished experience than a broad, unfinished one.
+https://song-analyzer-six.vercel.app/
 
-## Requirements
+## Setup
 
-Your tutorial should:
+- Dev
 
-- Guide a learner through a sequence of steps or concepts.
-- Include at least one meaningful interaction beyond navigating between steps. For example, a learner might make a choice, practice a skill, answer a question, or receive feedback based on an action.
-- Make it clear where the learner is and what to do next.
-- Work well on a recent desktop browser and a smaller screen.
-- Be either hosted at a publicly accessible URL **or** straightforward to run locally with documented setup instructions.
+    ```bash
+    npm ci
+    npm run dev
+    ```
 
-A backend, database, authentication, and production infrastructure are **not required**. It’s fine to use mock or local data.
+- Prod
 
-## Starter Project
+    ```bash
+    npm run lint
+    npm run build
+    npx serve out
+    ```
 
-The provided starter is a Next.js app using TypeScript, App Router, Tailwind CSS, and ESLint. You may add libraries or adapt the starter as needed.
+## My process
 
-### Local Development
+1. I picked a song and created a loop of it in Audacity.
+1. I wrote these [specs](./specs/initial-push/spec.md) and fed them into Fable via bbcd404187a41f23c00ebcd8501a9866b1df554e.
+1. I did a very small amount of QA polish with Opus via c6a68ff31753bd7c8db6fd31917935d50b34e632 (You can see my prompt in the commit message.)
 
-Use Node.js 22 LTS or newer. From the `teach-me-candidate` directory, run:
+## Time spent
 
-```bash
-npm ci
-npm run dev
-```
+I'm counting my time, as in efforts spent — not as in wall clock time, because Claude spent a while on it too!
 
-Open [http://localhost:3000](http://localhost:3000). You can start editing `src/app/page.tsx`; the shared layout and styles are in `src/app/layout.tsx` and `src/app/globals.css`.
+- ~3 hours for planning, audio prep, design, and writing specs (mostly via voice dictation)
+- ~1 hour for QA, polish, summarization, and deployment.
 
-No environment variables are required for the starter. Its `next/font/google` configuration for Geist requires network access during the build.
+## Tools or libraries used
 
-### Checks and Production Build
+- I used Claude Fable to build it, almost entirely in one shot
+- I didn't use any additional third party libraries
+- While not exactly a library or tool, I did rely on prior work of mine in building https://octavecompass.com/ both for design inspiration and as an aid in generating mockups for the initial spec.
 
-```bash
-npm run lint
-npm run build        # writes a fully static site to out/
-npx serve out        # serve the production build locally
-```
+## Process notes
 
-The site uses `output: "export"`, so `npm start` (`next start`) is not supported. Serve the generated `out/` directory instead; `npx serve out` prints the local URL (usually [http://localhost:3000](http://localhost:3000)).
+- I noticed that the repo contains an earlier commit that checks in `node_modules` folder. (GitHub complained to me about large files when I pushed to my repo.) In a real project, I'd fix this by altering the commit history, but I left it as-is for this.
 
-### Optional Deployment to Vercel
+## Corners cut
 
-1. Import your Git repository into [Vercel](https://vercel.com/new).
-2. Set the **Root Directory** to `./`.
-3. Use the automatically detected **Next.js** framework preset and default build settings.
-4. Deploy.
+- **Messy code**: I didn't prioritize code cleanliness and project structure at all. Lots of things are hard coded. I didn't set up any formatting. I didn't look at the lint rules. I didn't even think about type checking. These are all things that I would place a high priority on in a production application!
 
-Alternatively, run `npx vercel` from the starter directory and follow the prompts to create a preview deployment. Use `npx vercel --prod` for production. Hosting is optional if your app is easy to run locally.
+- **Poor load time and bandwidth usage**: The audio content is in wav format which is not great for bandwidth but was the simplest way to build it.
 
-## AI and Other Tools
+- **No adaptive Layout**: The page layout is optimized for landscape orientation only.
 
-You may use AI tools, documentation, and third-party libraries. Briefly tell us what you used and how. Be prepared to explain your implementation and the decisions you made.
+- **No cross browser testing**: I've not done any rigorous QA across different browsers and platforms and devices. I tested this to work well on Chrome on Linux.
 
-## What to Submit
+- **No tests**: I didn't add any tests.
 
-Please provide:
+- **Coarse commits**: I didn't prioritize keeping commit history clean and readable.
 
-1. A link to your source code and, if hosted, the live app.
-2. A short README with setup and run instructions, approximate time spent, and any significant tools or libraries used.
-3. A few notes on the tradeoffs you made, what you would improve with more time, and any known limitations.
+## What I'd improve with more time
 
-## What We’ll Look For
+- More songs that feature other scales and other types of chords!
+- Step four is admittedly the hardest step. It would be nice to find ways of guiding the user through this a bit better. One idea is to match the timbre of the chord playback with the timbre of the song's instrumentation. That would help in illuminating the harmonies and dissonance.
+- Theoretically, it would be possible to make this app function with a song that the user chooses. That would be especially neat!!
+- It would be cool to explain more about scale degrees and the roles that the chords at different scale degrees play in musical composition.
 
-We’ll discuss your work with you. We’re interested in the quality of the learning experience and interaction, thoughtful frontend implementation, usability and accessibility, and how you prioritize and explain tradeoffs within a limited time. We’re not judging the topic you choose or expecting a production-ready application.
+## Project structure
 
----
-
-# The tutorial: How to analyze a song's chord progression
-
-A five-page interactive lesson (a home page plus four steps) that walks a learner through working out a song's chords by ear: find the tonal center, pick the scale, find the chords that fit the scale, then place them on the song's timeline. The spec it was built from is in [`specs/initial-push/spec.md`](specs/initial-push/spec.md).
-
-## Run it
-
-```bash
-npm ci
-npm run dev        # http://localhost:3000
-```
-
-```bash
-npm run lint
-npm run build      # writes a fully static site to out/
-npx serve out      # preview the static build
-```
-
-The app is a static export (`output: "export"` in `next.config.ts`): one HTML file per route, client-side navigation between them, no server.
-
-## Deploy to Vercel
-
-Import the repository at [vercel.com/new](https://vercel.com/new) (or run `npx vercel`) and accept the detected **Next.js** preset. Vercel recognises the static export and serves `out/`; no extra configuration is needed.
-
-## Where things are
+_(notes written by Fable)_
 
 | Path | What it is |
 | --- | --- |
@@ -110,11 +83,15 @@ Import the repository at [vercel.com/new](https://vercel.com/new) (or run `npx v
 
 ## Audio credits
 
+_(notes written by Fable)_
+
 - **Song excerpt** — "Count on Me" by Bruno Mars (`public/audio/count-on-me.wav`), edited to loop.
 - **Piano** — [Salamander Grand Piano V3](https://github.com/sfzinstruments/SalamanderGrandPiano) by Alexander Holm, [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), from the copies hosted by [Tone.js](https://github.com/Tonejs/audio). Salamander records every third semitone; `scripts/make-piano-samples.sh` resamples the notes in between, trims each to five seconds, and normalises them.
 - **Correct / incorrect sounds** — `confirmation_001` and `question_004` from [Kenney's Interface Sounds](https://kenney.nl/assets/interface-sounds), CC0.
 - **Celebration jingle** — the vibraphone version of [Win Jingle](https://opengameart.org/content/win-jingle) by Fupi, CC0, transposed up a whole tone so that it ends on C.
 
 ## How the chord regions were found
+
+_(notes written by Fable)_
 
 `python3 scripts/analyze-chords.py` (numpy only) prints the timings used in `src/lib/music.ts`. It estimates the tempo from the onset envelope (89 BPM; the loop is exactly eight bars), tracks the strongest bass note on each beat, and reports the beats where that note changes.
