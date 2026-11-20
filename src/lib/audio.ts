@@ -23,11 +23,17 @@ const SFX_FILES: Sfx[] = ["correct", "incorrect", "celebrate"];
 // The song is mastered loud; pull it back so the piano can sit on top of it.
 const SONG_GAIN = 0.5;
 const NOTE_GAIN = 0.95;
+// Feedback has to cut through the song and a held chord, so it's boosted,
+// and everything else ducks out of its way while it plays (see sfx()).
 const SFX_GAIN: Record<Sfx, number> = {
-  correct: 0.55,
-  incorrect: 0.6,
-  celebrate: 0.9,
+  correct: 1.4,
+  incorrect: 1.5,
+  celebrate: 2.2,
 };
+/** How far the song and piano dip while a feedback sound plays. */
+const DUCK_LEVEL = 0.35;
+/** Longest the dip is held, so the celebration doesn't mute the song for long. */
+const DUCK_MAX_HOLD = 1.2;
 
 /** How quickly a released key dies away (time constant, seconds). */
 const RELEASE = 0.07;
@@ -37,6 +43,8 @@ const WAVEFORM_BARS = 160;
 class AudioEngine {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
+  /** The song and piano, mixed together so feedback sounds can duck them. */
+  private bed: GainNode | null = null;
   private buffers = new Map<string, AudioBuffer>();
   /** Seconds of (near) silence to skip at the head of each piano sample. */
   private onsets = new Map<string, number>();
@@ -118,6 +126,8 @@ class AudioEngine {
     limiter.release.value = 0.12;
     this.master = ctx.createGain();
     this.master.connect(limiter).connect(ctx.destination);
+    this.bed = ctx.createGain();
+    this.bed.connect(this.master);
     this.context = ctx;
     return ctx;
   }
@@ -211,7 +221,7 @@ class AudioEngine {
     const now = ctx.currentTime;
     gain.gain.setValueAtTime(0, now);
     gain.gain.linearRampToValueAtTime(SONG_GAIN, now + 0.012);
-    source.connect(gain).connect(this.master!);
+    source.connect(gain).connect(this.bed!);
     source.start(0, offset);
     this.songSource = source;
     this.songGain = gain;
@@ -244,7 +254,7 @@ class AudioEngine {
     gain.gain.linearRampToValueAtTime(SONG_GAIN, now + 0.01);
     gain.gain.setValueAtTime(SONG_GAIN, now + 0.1);
     gain.gain.linearRampToValueAtTime(0, now + 0.16);
-    source.connect(gain).connect(this.master!);
+    source.connect(gain).connect(this.bed!);
     source.start(0, offset, 0.17);
   }
 
@@ -261,7 +271,7 @@ class AudioEngine {
     source.playbackRate.value = rate;
     const amp = ctx.createGain();
     amp.gain.value = gain;
-    source.connect(amp).connect(this.master!);
+    source.connect(amp).connect(this.bed!);
     source.start(ctx.currentTime + delay, this.onsets.get(name) ?? 0);
     let released = false;
     return {
@@ -318,6 +328,18 @@ class AudioEngine {
     gain.gain.value = SFX_GAIN[name];
     source.connect(gain).connect(this.master!);
     source.start();
+    this.duck(Math.min(buffer.duration, DUCK_MAX_HOLD));
+  }
+
+  /** Dip the song and piano for `hold` seconds, then bring them back. */
+  private duck(hold: number) {
+    const gain = this.bed!.gain;
+    const now = this.ctx.currentTime;
+    gain.cancelScheduledValues(now);
+    gain.setValueAtTime(gain.value, now);
+    gain.linearRampToValueAtTime(DUCK_LEVEL, now + 0.03);
+    gain.setValueAtTime(DUCK_LEVEL, now + hold);
+    gain.linearRampToValueAtTime(1, now + hold + 0.35);
   }
 }
 

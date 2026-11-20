@@ -10,6 +10,7 @@ import {
 } from "react";
 import { NoteCircle, polar, toCircle, VIEW } from "@/components/NoteCircle";
 import { StepShell, type Feedback } from "@/components/StepShell";
+import { Timeline } from "@/components/Timeline";
 import { Fresh } from "@/components/tutorial";
 import { capture } from "@/components/useKeyPointers";
 import { audio, type Voice } from "@/lib/audio";
@@ -98,11 +99,7 @@ function AvailableChords() {
   } | null>(null);
   const settle = useRef(0);
 
-  // There's no timeline on this page, so make sure the song isn't left playing.
-  useEffect(() => {
-    audio.pause();
-    return () => cancelAnimationFrame(settle.current);
-  }, []);
+  useEffect(() => () => cancelAnimationFrame(settle.current), []);
 
   const solved = found.length === CHORD_IDS.length;
   const root = Math.round(nearestDetent(angle).angle / 30) % 12;
@@ -267,6 +264,8 @@ function AvailableChords() {
           where they fit. <strong>Choose all the chords within the scale.</strong>
         </p>
       </div>
+
+      <Timeline />
 
       <div className="picker">
         <NoteCircle

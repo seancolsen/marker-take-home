@@ -65,6 +65,30 @@ body {
   outline-offset: 3px;
 }
 
+/*
+ * Chunky buttons stand on a solid "lip" (a hard, offset box-shadow), so a
+ * plain outline only wraps the face: it sits too high and cuts across the lip.
+ * Ring the face and lip together instead. Each sets --lip to its lip height,
+ * and --edge to its border width (the ring is placed from inside the border).
+ */
+:is(.btn-primary, .tl-play, .choose-btn, .note-chip, .chord-bubble) {
+  position: relative;
+}
+
+:is(.btn-primary, .tl-play, .choose-btn, .note-chip, .chord-bubble):focus-visible {
+  outline: none;
+}
+
+:is(.btn-primary, .tl-play, .choose-btn, .note-chip, .chord-bubble):focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: calc(-6px - var(--edge, 0px));
+  bottom: calc(-6px - var(--edge, 0px) - var(--lip, 0px));
+  border: 3px solid var(--violet);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
 strong {
   font-weight: 800;
 }
@@ -94,6 +118,7 @@ strong {
 }
 
 .btn-primary {
+  --lip: 0.26rem;
   color: #fff;
   background: linear-gradient(180deg, #7f63ff, #5b3de6);
   box-shadow:
@@ -102,6 +127,7 @@ strong {
 }
 
 .btn-primary:active {
+  --lip: 0.06rem;
   transform: translateY(0.2rem);
   box-shadow: 0 0.06rem 0 var(--violet-deep);
 }
@@ -524,6 +550,7 @@ strong {
 }
 
 .tl-play {
+  --lip: 0.22rem;
   flex: none;
   display: grid;
   place-items: center;
@@ -542,6 +569,7 @@ strong {
 }
 
 .tl-play:active {
+  --lip: 0.06rem;
   transform: translateY(0.16rem);
   box-shadow: 0 0.06rem 0 #d93b74;
 }
@@ -835,6 +863,8 @@ strong {
 }
 
 .note-chip {
+  --lip: 0.18rem;
+  --edge: 2px;
   position: relative;
   display: grid;
   place-items: center;
@@ -861,6 +891,7 @@ strong {
 }
 
 .note-chip[data-held] {
+  --lip: 0px;
   border-color: #e5a900;
   background: var(--sun);
   box-shadow: 0 0.5rem 1rem -0.3rem rgb(42 34 80 / 0.45);
@@ -1126,6 +1157,7 @@ strong {
 /* -- Buttons in and around the circle ------------------------------------------- */
 
 .choose-btn {
+  --lip: 0.22rem;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -1145,6 +1177,7 @@ strong {
 }
 
 .choose-btn:active {
+  --lip: 0.05rem;
   box-shadow: 0 0.05rem 0 var(--violet-deep);
 }
 
@@ -1284,6 +1317,8 @@ button.chord-chip {
 }
 
 .chord-bubble {
+  --lip: 0.3rem;
+  --edge: 2.5px;
   display: grid;
   place-items: center;
   width: 4.7rem;
