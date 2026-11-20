@@ -49,11 +49,14 @@ I'm counting my time, as in efforts spent — not as in wall clock time, because
 
 ## Corners cut
 
+- **Tiny screens won't work well** You said small screens, but not how small. I designed this with a tablet in mind, not a phone. But without having a tablet handy, I tested it on a reasonably small web browser window on my laptop. It does not scale down super well. It certainly could be adapted to work on a phone, but that wasn't my intent.
+
+- **No adaptive Layout**: The page layout is optimized for landscape orientation only.
+
 - **Messy code**: I didn't prioritize code cleanliness and project structure at all. Lots of things are hard coded. I didn't set up any formatting. I didn't look at the lint rules. I didn't even think about type checking. These are all things that I would place a high priority on in a production application!
 
 - **Poor load time and bandwidth usage**: The audio content is in wav format which is not great for bandwidth but was the simplest way to build it.
 
-- **No adaptive Layout**: The page layout is optimized for landscape orientation only.
 
 - **No cross browser testing**: I've not done any rigorous QA across different browsers and platforms and devices. I tested this to work well on Chrome on Linux.
 
