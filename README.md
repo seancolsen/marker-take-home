@@ -41,9 +41,11 @@ No environment variables are required for the starter. Its `next/font/google` co
 
 ```bash
 npm run lint
-npm run build
-npm start
+npm run build        # writes a fully static site to out/
+npx serve out        # serve the production build locally
 ```
+
+The site uses `output: "export"`, so `npm start` (`next start`) is not supported. Serve the generated `out/` directory instead; `npx serve out` prints the local URL (usually [http://localhost:3000](http://localhost:3000)).
 
 ### Optional Deployment to Vercel
 
